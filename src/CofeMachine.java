@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class CofeMachine {
     public enum Status {
-        ACTION, KIND, FILL
+        ACTION, KIND, FILL, REMAINING
     }
 
     int[] ingridience = new int[]{400, 540, 120, 550, 9};
@@ -15,19 +15,25 @@ public class CofeMachine {
     int[] latte = new int[]{350, 75, 20, 7};
     int[] cappuchino = new int[]{200, 100, 12, 6};
     boolean working = true;
-    String action;
     Status status = Status.ACTION;
     public void work(String inner) {
         switch (this.status) {
             case ACTION:
-                this.action = inner;
+                if (inner.equals("buy")){
+                    this.status = Status.KIND;
+                }
+                else if(inner.equals("fill")){
+                    this.status = Status.FILL;
+                }
                 break;
             case KIND:
                 this.ingridience = buy(this.ingridience, this.waterIndex, this.milkIndex, this.beansIndex, this.moneyIndex,
                 this.cupIndex, this.espresso, this.latte, this.cappuchino, inner);
+                this.status = Status.ACTION;
                 break;
             case FILL:
 
+                break;
         }
     }
     public static int[] buy(int[] ingridience, int waterIndex, int milkIndex, int beansIndex, int moneyIndex, int cupIndex,
