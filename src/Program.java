@@ -6,13 +6,14 @@ public class Program {
         while(cofe1.working){
             switch(cofe1.status){
                 case ACTION:
-                    System.out.println("Enter actoin");
+                    System.out.println("Write action (buy, fill, take, remaining, exit):");
                     cofe1.work(in.nextLine());
                     break;
                 case KIND:
-                    System.out.println("");
                     cofe1.work(in.nextLine());
                     break;
+                case FILL:
+                    cofe1.work(in.nextLine());
             }
         }
     }

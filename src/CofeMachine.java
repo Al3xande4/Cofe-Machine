@@ -2,9 +2,8 @@ import java.util.Scanner;
 
 public class CofeMachine {
     public enum Status {
-        ACTION, KIND, FILL, REMAINING
+        ACTION, KIND, FILL
     }
-
     int[] ingridience = new int[]{400, 540, 120, 550, 9};
     int waterIndex = 0;
     int milkIndex = 1;
@@ -14,6 +13,12 @@ public class CofeMachine {
     int[] espresso = new int[]{250, 0, 16, 4};
     int[] latte = new int[]{350, 75, 20, 7};
     int[] cappuchino = new int[]{200, 100, 12, 6};
+    int[] filling = new int[5];
+    int water = 0;
+    int milk = 0;
+    int beans = 0;
+    int cups = 0;
+    int j = 0;
     boolean working = true;
     Status status = Status.ACTION;
     public void work(String inner) {
@@ -21,24 +26,68 @@ public class CofeMachine {
             case ACTION:
                 if (inner.equals("buy")){
                     this.status = Status.KIND;
+                    System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, 4 - back - to main menu: ");
                 }
                 else if(inner.equals("fill")){
                     this.status = Status.FILL;
+                    System.out.println("Write how many ml of water you want to add: ");
+                }
+                else if(inner.equals("remaining")){
+                    remaining(this.ingridience, waterIndex, milkIndex, beansIndex, cupIndex, moneyIndex);
+                }
+                else if(inner.equals("take")){
+                    this.ingridience = take(this.ingridience, moneyIndex);
+                }
+                else if(inner.equals("exit")){
+                    this.working = false;
                 }
                 break;
             case KIND:
-                this.ingridience = buy(this.ingridience, this.waterIndex, this.milkIndex, this.beansIndex, this.moneyIndex,
-                this.cupIndex, this.espresso, this.latte, this.cappuchino, inner);
+                this.ingridience = buy(this.ingridience, waterIndex, milkIndex, beansIndex, moneyIndex,
+                cupIndex, espresso, latte, cappuchino, inner);
                 this.status = Status.ACTION;
                 break;
             case FILL:
-
-                break;
+                if(this.j == 0){
+                    for(int i = 0; i < inner.length(); i++){
+                        this.water += (inner.charAt(i) - 48) * Math.pow(10, inner.length() - 1 - i);
+                    }
+                    this.filling[waterIndex] = this.water;
+                    this.j++;
+                    System.out.println("Write how many ml of milk you want to add: ");
+                    return;
+                }
+                if(this.j == 1){
+                    for(int i = 0; i < inner.length(); i++){
+                        this.milk += (inner.charAt(i) - 48) * Math.pow(10, inner.length() - 1 - i);
+                    }
+                    this.filling[milkIndex] = this.milk;
+                    this.j++;
+                    System.out.println("Write how many grams of coffee beans you want to add: ");
+                    return;
+                }
+                if(this.j == 2){
+                    for(int i = 0; i < inner.length(); i++){
+                        this.beans += (inner.charAt(i) - 48) * Math.pow(10, inner.length() - 1 - i);
+                    }
+                    this.filling[beansIndex] = this.beans;
+                    this.j++;
+                    System.out.println("Write how many disposable cups of coffee you want to add:");
+                    return;
+                }
+                if(this.j == 3){
+                    for(int i = 0; i < inner.length(); i++){
+                        this.cups += (inner.charAt(i) - 48) * Math.pow(10, inner.length() - 1 - i);
+                    }
+                    this.filling[cupIndex] = this.cups;
+                    this.j = 0;
+                    this.ingridience = fill(this.ingridience, waterIndex, milkIndex, beansIndex, cupIndex, this.filling);
+                    this.status = Status.ACTION;
+                }
         }
     }
     public static int[] buy(int[] ingridience, int waterIndex, int milkIndex, int beansIndex, int moneyIndex, int cupIndex,
                             int[] espresso, int[] latte, int[] cappuchino, String kind) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, 4 - back - to main menu: ");
         switch (kind) {
             case "1":
                 if (espresso[waterIndex] <= ingridience[waterIndex]) {
@@ -110,16 +159,11 @@ public class CofeMachine {
         }
         return ingridience;
     }
-    public static int[] fill(int[] ingridience, int waterIndex, int milkIndex, int beansIndex, int cupIndex){
-        Scanner in = new Scanner(System.in);
-        System.out.println("Write how many ml of water you want to add: ");
-        ingridience[waterIndex] += in.nextInt();
-        System.out.println("Write how many ml of milk you want to add: ");
-        ingridience[milkIndex] += in.nextInt();
-        System.out.println("Write how many grams of coffee beans you want to add: ");
-        ingridience[beansIndex] += in.nextInt();
-        System.out.println("Write how many disposable cups of coffee you want to add:");
-        ingridience[cupIndex] += in.nextInt();
+    public static int[] fill(int[] ingridience, int waterIndex, int milkIndex, int beansIndex, int cupIndex, int[] filling){
+        ingridience[waterIndex] += filling[waterIndex];
+        ingridience[milkIndex] += filling[milkIndex];
+        ingridience[beansIndex] += filling[beansIndex];
+        ingridience[cupIndex] += filling[cupIndex];
         return ingridience;
     }
     public static int[] take(int[] ingridience, int moneyIndex){
